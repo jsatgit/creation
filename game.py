@@ -18,6 +18,8 @@ class BaseGame(object):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     is_running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    self.mouse_down()
             self.render()
             pygame.display.flip()
         pygame.quit()
@@ -84,18 +86,19 @@ class Game(BaseGame):
                 resource = self.grid.get(i, j)
                 pygame.draw.rect(self.screen, resource.color, rect)
 
+    def mouse_down(self):
+        w, h = pygame.mouse.get_pos()
+        j = w / self.block_size
+        i = h / self.block_size
+        resource = self.grid.get(i, j)
+        print resource.name
+
     def first_render(self):
         self.draw_grid()
 
     def render(self):
-        left, mid, right = pygame.mouse.get_pressed()
-        if left:
-            w, h = pygame.mouse.get_pos()
-            j = w / self.block_size
-            i = h / self.block_size
-            resource = self.grid.get(i, j)
-            print resource.name
+        pass
 
-
-game = Game()
-game.start()
+if __name__ == "__main__":
+    game = Game()
+    game.start()
