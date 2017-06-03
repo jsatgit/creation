@@ -27,8 +27,6 @@ def rand_color():
     b = random.randint(0, 255)
     return (r, g, b)
 
-RED =   (255,   0,   0)
-
 class Game(BaseGame):
     def __init__(self):
         super(Game, self).__init__()
