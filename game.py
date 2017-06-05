@@ -1,5 +1,6 @@
 import pygame
 import random
+import thorpy
 
 class BaseGame(object):
     def __init__(self, dim=[500,500], fps=10):
@@ -20,6 +21,7 @@ class BaseGame(object):
                     is_running = False
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     self.mouse_down()
+                self.on_event(event)
             self.render()
             pygame.display.flip()
         pygame.quit()
@@ -70,6 +72,9 @@ class Game(BaseGame):
         m, n = self.dim
         self.grid = Grid(n, m)
 
+    def on_event(self, event):
+        self.menu.react(event)
+
     def draw_grid(self):
         width, height = self.dim
         n_blocks_wide = width / self.block_size 
@@ -91,10 +96,30 @@ class Game(BaseGame):
         j = w / self.block_size
         i = h / self.block_size
         resource = self.grid.get(i, j)
-        print resource.name
+        #print resource.name
+
+    def combine(self):
+        items = [checker.get_text() for checker in self.checkers if checker.get_value() ]
+        print 'Combining: {}'.format(items)
+
+    def draw_gui(self):
+        resources = self.grid.resources
+        self.checkers = [thorpy.Checker.make(resource.name, value=False) for resource in resources]
+        button = thorpy.make_button("Combine", func=self.combine)
+        elements = []
+        elements += self.checkers 
+        elements.append(button)
+        box = thorpy.Box.make(elements=elements)
+        self.menu = thorpy.Menu(box)
+        for element in self.menu.get_population():
+            element.surface = self.screen
+        box.set_topleft((100,100))
+        box.blit()
+        box.update()
 
     def first_render(self):
         self.draw_grid()
+        self.draw_gui()
 
     def render(self):
         pass
